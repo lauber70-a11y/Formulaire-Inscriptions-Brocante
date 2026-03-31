@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Brocante - Comité des Fêtes</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #18bc9c; --light: #f5f6fa; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--light); color: #333; margin: 0; padding: 20px; }
+        .form-container { max-width: 600px; margin: 30px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); text-align: center; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        label { font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+        input, select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        .radio-group { display: flex; gap: 20px; margin-top: 5px; }
+        .radio-group label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        button { background-color: var(--secondary); color: white; border: none; padding: 15px; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        button:hover { background-color: #15a589; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        #message-succes { display: none; text-align: center; padding: 25px; background: #d4edda; color: #155724; border-radius: 5px; margin-top: 20px; border: 1px solid #c3e6cb; }
+        .adresse-bloc { background: white; padding: 15px; border-radius: 5px; border: 1px solid #b3d7bd; margin: 15px 0; font-weight: bold; color: #155724; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>🎪 Inscription à la Brocante</h1>
+    <p class="subtitle">Remplissez ce formulaire pour réserver votre emplacement.</p>
+
+    <form id="public-form">
+        <div class="form-group">
+            <label>Vous êtes :</label>
+            <div class="radio-group">
+                <label><input type="radio" name="typeExposant" value="Particulier" checked onchange="toggleSiret()"> Un Particulier</label>
+                <label><input type="radio" name="typeExposant" value="Professionnel" onchange="toggleSiret()"> Un Professionnel</label>
+            </div>
+        </div>
+
+        <div class="form-group" id="groupe-siret" style="display:none;">
+            <label for="siret">N° SIRET *</label>
+            <input type="text" id="siret" placeholder="Ex: 123 456 789 00012">
+        </div>
+
+        <div class="form-group">
+            <label for="nom">Nom et Prénom (ou Raison Sociale) *</label>
+            <input type="text" id="nom" required placeholder="Ex: Jean Dupont">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Adresse E-mail *</label>
+            <input type="email" id="email" required placeholder="Ex: jean.dupont@email.com">
+        </div>
+
+        <div class="form-group">
+            <label for="telephone">Numéro de Téléphone *</label>
+            <input type="tel" id="telephone" required placeholder="Ex: 06 12 34 56 78">
+        </div>
+
+        <div class="form-group">
+            <label for="adresse">Adresse Postale complète *</label>
+            <input type="text" id="adresse" required placeholder="Ex: 12 rue des Fleurs, 75000 Paris">
+        </div>
+
+        <div class="form-group">
+            <label for="cni">Numéro de la Pièce d'Identité *</label>
+            <input type="text" id="cni" required placeholder="CNI, Passeport...">
+        </div>
+
+        <div class="form-group">
+            <label for="metres">Métrage souhaité (2€ le mètre) *</label>
+            <input type="number" id="metres" min="1" max="20" required placeholder="Ex: 5">
+        </div>
+
+        <button type="submit" id="btn-submit">Envoyer ma demande de réservation</button>
+    </form>
+
+    <div id="message-succes">
+        <h3>🎉 Demande enregistrée !</h3>
+        <p>Votre demande a bien été transmise au comité.</p>
+        
+        <p style="margin-bottom: 5px;"><strong>Prochaine étape :</strong> Pour valider définitivement votre emplacement, merci d'envoyer votre chèque de <strong><span id="prix-final">0</span> €</strong> à l'adresse suivante :</p>
+        
+        <div class="adresse-bloc">
+            📜 <strong>Ordre du chèque :</strong> Comité des fêtes de Montbozon<br><br>
+            📬 <strong>Adresse d'envoi :</strong><br>
+            Mr GIARD Jacques<br>
+            8 rue du docteur RENARD<br>
+            70230 Montbozon
+        </div>
+
+        <p style="font-size: 14px; margin-top: 10px;"><em>Dès réception de votre courrier, votre statut passera en "Payé" dans notre système de gestion.</em></p>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<script>
+    // ==========================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
+        authDomain: "inscription-brocante.firebaseapp.com",
+        databaseURL: "https://inscription-brocante-default-rtdb.europe-west1.firebasedatabase.app/", // <-- COLLEZ VOTRE LIEN ICI !
+        projectId: "inscription-brocante",
+        storageBucket: "inscription-brocante.firebasestorage.app",
+        messagingSenderId: "836597625276",
+        appId: "1:836597625276:web:432d6eaada859773f5bbb9"
+    };
+    // ==========================================================
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const anneeActuelle = new Date().getFullYear().toString();
+
+    function toggleSiret() {
+        const type = document.querySelector('input[name="typeExposant"]:checked').value;
+        document.getElementById('groupe-siret').style.display = (type === "Professionnel") ? "flex" : "none";
+    }
+
+    const form = document.getElementById('public-form');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Envoi en cours...";
+
+        const type = document.querySelector('input[name="typeExposant"]:checked').value;
+        const nom = document.getElementById('nom').value;
+        const email = document.getElementById('email').value;
+        const telephone = document.getElementById('telephone').value;
+        const adresse = document.getElementById('adresse').value;
+        const cni = document.getElementById('cni').value;
+        const metres = parseInt(document.getElementById('metres').value);
+        const siret = document.getElementById('siret').value;
+
+        try {
+            // Envoi dans Realtime Database
+            const refExposants = db.ref("annees/" + anneeActuelle + "/exposants");
+            await refExposants.push({
+                type,
+                nom,
+                email,
+                telephone,
+                adresse,
+                cni,
+                siret: (type === "Professionnel" ? siret : ''),
+                metres,
+                emplacement: '-', 
+                statut: 'En attente',
+                prixTotal: metres * 2,
+                emailEnvoye: false,
+                dateDemande: new Date().toISOString()
+            });
+
+            // Affichage du succès
+            document.getElementById('prix-final').innerText = metres * 2;
+            form.style.display = 'none';
+            document.getElementById('message-succes').style.display = 'block';
+
+        } catch (error) {
+            console.error(error);
+            alert("Une erreur est survenue lors de l'envoi. Recommencez ou contactez le comité.");
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Envoyer ma demande de réservation";
+        }
+    });
+</script>
+
+</body>
+</html>
