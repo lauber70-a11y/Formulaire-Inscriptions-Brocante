@@ -68,8 +68,18 @@
         </div>
 
         <div class="form-group">
-            <label for="metres">Métrage souhaité (2€ le mètre) Par tranche de 5 Mètres *</label>
-            <input type="number" id="metres" min="1" max="100" required placeholder="Ex: 5">
+            <label for="dateCni">Date de délivrance de la pièce d'identité *</label>
+            <input type="date" id="dateCni" required>
+        </div>
+
+        <div class="form-group">
+            <label for="autoriteCni">Délivrée par (Autorité) *</label>
+            <input type="text" id="autoriteCni" required placeholder="Ex: Mairie de Besançon, Préfecture...">
+        </div>
+
+        <div class="form-group">
+            <label for="metres">Métrage souhaité (2€ le mètre) *</label>
+            <input type="number" id="metres" min="1" max="20" required placeholder="Ex: 5">
         </div>
 
         <button type="submit" id="btn-submit">Envoyer ma demande de réservation</button>
@@ -101,7 +111,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
         authDomain: "inscription-brocante.firebaseapp.com",
-        databaseURL: "https://inscription-brocante-default-rtdb.europe-west1.firebasedatabase.app/", // <-- COLLEZ VOTRE LIEN ICI !
+        databaseURL: "https://inscription-brocante-default-rtdb.europe-west1.firebasedatabase.app/",
         projectId: "inscription-brocante",
         storageBucket: "inscription-brocante.firebasestorage.app",
         messagingSenderId: "836597625276",
@@ -132,6 +142,8 @@
         const telephone = document.getElementById('telephone').value;
         const adresse = document.getElementById('adresse').value;
         const cni = document.getElementById('cni').value;
+        const dateCni = document.getElementById('dateCni').value;
+        const autoriteCni = document.getElementById('autoriteCni').value;
         const metres = parseInt(document.getElementById('metres').value);
         const siret = document.getElementById('siret').value;
 
@@ -145,6 +157,8 @@
                 telephone,
                 adresse,
                 cni,
+                dateCni,
+                autoriteCni,
                 siret: (type === "Professionnel" ? siret : ''),
                 metres,
                 emplacement: '-', 
