@@ -20,6 +20,7 @@
         button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
         #message-succes { display: none; text-align: center; padding: 25px; background: #d4edda; color: #155724; border-radius: 5px; margin-top: 20px; border: 1px solid #c3e6cb; }
         .adresse-bloc { background: white; padding: 15px; border-radius: 5px; border: 1px solid #b3d7bd; margin: 15px 0; font-weight: bold; color: #155724; text-align: left; }
+        .prix-recap { background: #e8f4f8; padding: 10px; border-radius: 5px; margin-top: 5px; font-weight: bold; text-align: center; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -78,8 +79,17 @@
         </div>
 
         <div class="form-group">
-            <label for="metres">Métrage souhaité (2€ le mètre) Par tranches de 5 mètres *</label>
-            <input type="number" id="metres" min="1" max="100" required placeholder="Ex: 5">
+            <label for="metres">Métrage souhaité (2€ le mètre) *</label>
+            <input type="number" id="metres" min="1" max="20" required placeholder="Ex: 5" oninput="calculerTotal()">
+        </div>
+
+        <div class="form-group">
+            <label for="repas">Nombre de plateaux repas souhaités (15€ l'unité)</label>
+            <input type="number" id="repas" min="0" max="10" value="0" oninput="calculerTotal()">
+        </div>
+
+        <div class="prix-recap">
+            Total à régler : <span id="total-estimation">0</span> €
         </div>
 
         <button type="submit" id="btn-submit">Envoyer ma demande de réservation</button>
@@ -111,7 +121,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
         authDomain: "inscription-brocante.firebaseapp.com",
-        databaseURL: "https://inscription-brocante-default-rtdb.europe-west1.firebasedatabase.app/",
+        databaseURL: "https://inscription-brocante-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "inscription-brocante",
         storageBucket: "inscription-brocante.firebasestorage.app",
         messagingSenderId: "836597625276",
@@ -126,6 +136,14 @@
     function toggleSiret() {
         const type = document.querySelector('input[name="typeExposant"]:checked').value;
         document.getElementById('groupe-siret').style.display = (type === "Professionnel") ? "flex" : "none";
+    }
+
+    function calculerTotal() {
+        const metres = parseInt(document.getElementById('metres').value) || 0;
+        const repas = parseInt(document.getElementById('repas').value) || 0;
+        const total = (metres * 2) + (repas * 15);
+        document.getElementById('total-estimation').innerText = total;
+        return total;
     }
 
     const form = document.getElementById('public-form');
@@ -144,11 +162,13 @@
         const cni = document.getElementById('cni').value;
         const dateCni = document.getElementById('dateCni').value;
         const autoriteCni = document.getElementById('autoriteCni').value;
-        const metres = parseInt(document.getElementById('metres').value);
+        const metres = parseInt(document.getElementById('metres').value) || 0;
+        const repas = parseInt(document.getElementById('repas').value) || 0;
         const siret = document.getElementById('siret').value;
+        
+        const prixTotal = (metres * 2) + (repas * 15);
 
         try {
-            // Envoi dans Realtime Database
             const refExposants = db.ref("annees/" + anneeActuelle + "/exposants");
             await refExposants.push({
                 type,
@@ -161,15 +181,15 @@
                 autoriteCni,
                 siret: (type === "Professionnel" ? siret : ''),
                 metres,
+                repas, // On stocke le nombre de repas
                 emplacement: '-', 
                 statut: 'En attente',
-                prixTotal: metres * 2,
+                prixTotal: prixTotal,
                 emailEnvoye: false,
                 dateDemande: new Date().toISOString()
             });
 
-            // Affichage du succès
-            document.getElementById('prix-final').innerText = metres * 2;
+            document.getElementById('prix-final').innerText = prixTotal;
             form.style.display = 'none';
             document.getElementById('message-succes').style.display = 'block';
 
