@@ -9,50 +9,27 @@
         :root { --primary: #2c3e50; --secondary: #18bc9c; --light: #f5f6fa; --accent: #3498db; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--light); color: #333; margin: 0; padding: 20px; }
         .form-container { max-width: 600px; margin: 20px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
         .header-asso { text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--secondary); padding-bottom: 15px; }
         .header-asso h2 { color: var(--primary); margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
-        
         h1 { color: var(--primary); text-align: center; margin-bottom: 5px; font-size: 24px; }
         p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; line-height: 1.5; }
-        
         .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
         label { font-weight: 600; margin-bottom: 5px; font-size: 14px; }
         input, select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background: white; }
-        
         .radio-group { display: flex; gap: 20px; margin-top: 5px; }
         .radio-group label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        
-        /* Style du bouton Règlement */
-        .btn-reglement { 
-            display: block; 
-            text-decoration: none; 
-            color: white; 
-            background: var(--accent); 
-            padding: 12px; 
-            border-radius: 5px; 
-            font-size: 14px; 
-            font-weight: bold; 
-            text-align: center; 
-            margin: 10px 0 20px 0;
-            transition: background 0.3s;
-        }
-        .btn-reglement:hover { background: #2980b9; }
-
+        .btn-reglement { display: block; text-decoration: none; color: white; background: var(--accent); padding: 12px; border-radius: 5px; font-size: 14px; font-weight: bold; text-align: center; margin: 10px 0 20px 0; }
         .prix-recap { background: #e8f4f8; padding: 15px; border-radius: 5px; margin: 20px 0; font-weight: bold; text-align: center; color: var(--primary); border: 1px solid #d1e9f0; font-size: 18px; }
         
+        /* STYLE DU PLATEAU REPAS RE-AJOUTÉ */
         .menu-box { background: #fdfefe; border: 1px dashed #18bc9c; padding: 12px; border-radius: 5px; margin-top: 10px; font-size: 13px; }
         .menu-box ul { margin: 5px 0 0 18px; padding: 0; color: #555; list-style-type: '→ '; }
         
         .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; }
         .checkbox-group input { width: auto; margin-top: 3px; cursor: pointer; }
-        .checkbox-group label { font-weight: normal; font-size: 13px; line-height: 1.4; cursor: pointer; }
-        
+        .checkbox-group label { font-weight: normal; font-size: 13px; line-height: 1.4; }
         button#btn-submit { background-color: var(--secondary); color: white; border: none; padding: 15px; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
-        
-        /* Bouton PDF spécifique */
         .btn-pdf { background-color: #e67e22; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; }
-
         #message-succes { display: none; text-align: center; padding: 25px; background: #d4edda; color: #155724; border-radius: 5px; margin-top: 20px; border: 1px solid #c3e6cb; }
         .adresse-bloc { background: white; padding: 15px; border-radius: 5px; border: 1px solid #b3d7bd; margin: 15px 0; font-weight: bold; color: #155724; text-align: left; }
     </style>
@@ -60,14 +37,9 @@
 <body>
 
 <div class="form-container">
-    <div class="header-asso">
-        <h2>Comité des Fêtes de Montbozon</h2>
-    </div>
-
+    <div class="header-asso"><h2>Comité des Fêtes de Montbozon</h2></div>
     <h1>🎪 Inscription à la Brocante</h1>
-    <p class="subtitle">Réservez votre emplacement en quelques clics.<br>
-    Date limite : <strong>10 juillet 2026</strong><br>
-    Contact : Mr GIARD Jacques 07 80 33 35 50</p>
+    <p class="subtitle">Réservez votre emplacement.<br>Contact : Mr GIARD Jacques 07 80 33 35 50</p>
     
     <form id="public-form">
         <div class="form-group">
@@ -80,28 +52,29 @@
 
         <div class="form-group" id="groupe-siret" style="display:none;">
             <label for="siret">N° SIRET *</label>
-            <input type="text" id="siret" maxlength="14" placeholder="14 chiffres sans espaces">
+            <input type="text" id="siret" maxlength="14" placeholder="14 chiffres">
         </div>
 
-        <div class="form-group"><label for="nom">Nom et Prénom *</label><input type="text" id="nom" required placeholder="Ex: Jean Dupont"></div>
-        <div class="form-group"><label for="email">Adresse E-mail *</label><input type="email" id="email" required placeholder="Ex: jean.dupont@email.com"></div>
-        <div class="form-group"><label for="telephone">Numéro de Téléphone *</label><input type="tel" id="telephone" required placeholder="Ex: 06 12 34 56 78"></div>
-        <div class="form-group"><label for="adresse">Adresse Postale complète *</label><input type="text" id="adresse" required placeholder="Ex: 12 rue des Fleurs, 70230 Montbozon"></div>
-        <div class="form-group"><label for="cni">N° Pièce d'Identité *</label><input type="text" id="cni" required placeholder="CNI, Passeport..."></div>
-        <div class="form-group"><label for="dateCni">Date de délivrance *</label><input type="date" id="dateCni" required></div>
-        <div class="form-group"><label for="autoriteCni">Délivrée par (Autorité) *</label><input type="text" id="autoriteCni" required placeholder="Ex: Mairie de Besançon"></div>
+        <div class="form-group"><label for="nom">Nom et Prénom *</label><input type="text" id="nom" required></div>
+        <div class="form-group"><label for="email">Adresse E-mail *</label><input type="email" id="email" required></div>
+        <div class="form-group"><label for="telephone">Téléphone *</label><input type="tel" id="telephone" required></div>
+        <div class="form-group"><label for="adresse">Adresse Postale *</label><input type="text" id="adresse" required></div>
+        <div class="form-group"><label for="cni">N° Pièce d'Identité *</label><input type="text" id="cni" required></div>
+        <div class="form-group"><label for="dateCni">Date délivrance *</label><input type="date" id="dateCni" required></div>
+        <div class="form-group"><label for="autoriteCni">Délivrée par *</label><input type="text" id="autoriteCni" required></div>
 
         <div class="form-group">
-            <label for="metres">Métrage souhaité (2€ le mètre / Tranches de 5m) *</label>
+            <label for="metres">Métrage (2€/m) *</label>
             <select id="metres" required onchange="calculerTotal()">
-                <option value="" disabled selected>Choisir le métrage...</option>
-                <script>for(let i=5; i<=100; i+=5) { document.write(`<option value="${i}">${i} mètres (${i*2}€)</option>`); }</script>
+                <option value="" disabled selected>Choisir...</option>
+                <script>for(let i=5; i<=100; i+=5) { document.write(`<option value="${i}">${i} m (${i*2}€)</option>`); }</script>
             </select>
         </div>
 
         <div class="form-group">
             <label for="repas">Nombre de plateaux repas (15€ l'unité)</label>
             <input type="number" id="repas" min="0" max="10" value="0" oninput="calculerTotal()">
+            
             <div class="menu-box">
                 <strong style="color: #18bc9c;">🍴 Composition du plateau :</strong>
                 <ul>
@@ -109,44 +82,38 @@
                     <li>Tranche de rôti</li>
                     <li>Terrine de canard</li>
                     <li>Demi tomate, salade de choux, carottes</li>
-                    <li>Salade composée </li>
-                    <li>Brie</li>
+                    <li>Salade composée</li>
+                    <li>Fromage (brie)</li>
                     <li>Dessert de saison</li>
-                    <li>Pain, serviette et couverts</li>
+                    <li>Pain</li>
+                    <li>Plateau, serviette et couverts</li>
                 </ul>
             </div>
         </div>
 
         <div class="prix-recap">Total à régler : <span id="total-estimation">0</span> €</div>
 
-        <div class="form-group" style="margin-top: 10px;">
-            <label>Documents et validation :</label>
-            <a href="https://drive.google.com/file/d/1Vj3rTCfhg4ZT9Ra_t9WAGCiyZGBouZeT/view?usp=sharing" target="_blank" class="btn-reglement">
-                📖 CLIQUEZ ICI POUR LIRE LE RÈGLEMENT (PDF)
-            </a>
-            
+        <div class="form-group">
+            <label>Validation :</label>
+            <a href="https://drive.google.com/file/d/1Vj3rTCfhg4ZT9Ra_t9WAGCiyZGBouZeT/view?usp=sharing" target="_blank" class="btn-reglement">📖 LIRE LE RÈGLEMENT (PDF)</a>
             <div class="checkbox-group">
                 <input type="checkbox" id="reglement" required>
                 <label for="reglement">J'accepte le règlement de la brocante. *</label>
             </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="rgpd" required>
-                <label for="rgpd">J'autorise la conservation de mes données pour mon inscription. *</label>
+                <label for="rgpd">J'autorise la gestion de mes données pour mon inscription. *</label>
             </div>
         </div>
-
         <button type="submit" id="btn-submit">Envoyer ma réservation</button>
     </form>
 
     <div id="message-succes">
-        <h3>🎉 Demande enregistrée !</h3>
-        <p>Merci ! Votre demande est bien reçue.</p>
-        
+        <h3>🎉 Réservation envoyée !</h3>
         <button onclick="genererPDF()" class="btn-pdf">📥 Télécharger mon récapitulatif (PDF)</button>
-        
-        <p style="margin-top:20px;">Pour confirmer, envoyez votre chèque de <strong><span id="prix-final">0</span> €</strong> à :</p>
+        <p>Envoyez votre chèque de <strong><span id="prix-final">0</span> €</strong> à :</p>
         <div class="adresse-bloc">
-            📜 <strong>Ordre :</strong> Comité des fêtes de Montbozon<br><br>
+            📜 <strong>Ordre :</strong> Comité des fêtes de Montbozon<br>
             📬 <strong>Adresse :</strong> Mr GIARD Jacques, 8 rue du docteur RENARD, 70230 Montbozon
         </div>
     </div>
@@ -168,48 +135,51 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const anneeActuelle = new Date().getFullYear().toString();
 
     function toggleSiret() {
-        const type = document.querySelector('input[name="typeExposant"]:checked').value;
-        document.getElementById('groupe-siret').style.display = (type === "Professionnel") ? "flex" : "none";
+        const typeEl = document.querySelector('input[name="typeExposant"]:checked');
+        document.getElementById('groupe-siret').style.display = (typeEl && typeEl.value === "Professionnel") ? "flex" : "none";
     }
 
     function calculerTotal() {
-        const metres = parseInt(document.getElementById('metres').value) || 0;
-        const repas = parseInt(document.getElementById('repas').value) || 0;
-        const total = (metres * 2) + (repas * 15);
+        const m = parseInt(document.getElementById('metres').value) || 0;
+        const r = parseInt(document.getElementById('repas').value) || 0;
+        const total = (m * 2) + (r * 15);
         document.getElementById('total-estimation').innerText = total;
         return total;
     }
 
-    const form = document.getElementById('public-form');
-    const btnSubmit = document.getElementById('btn-submit');
-
-    form.addEventListener('submit', async function(e) {
+    document.getElementById('public-form').addEventListener('submit', async function(e) {
         e.preventDefault();
-        btnSubmit.disabled = true;
+        const typeExposantVal = document.querySelector('input[name="typeExposant"]:checked').value;
         const prixTotal = calculerTotal();
 
+        this.querySelector('button').disabled = true;
+
         try {
-            await db.ref("annees/" + anneeActuelle + "/exposants").push({
+            await db.ref("annees/2026/exposants").push({
+                type: typeExposantVal,
                 nom: document.getElementById('nom').value,
                 email: document.getElementById('email').value,
                 telephone: document.getElementById('telephone').value,
+                adresse: document.getElementById('adresse').value,
+                cni: document.getElementById('cni').value,
+                dateCni: document.getElementById('dateCni').value,
+                autoriteCni: document.getElementById('autoriteCni').value,
+                siret: (typeExposantVal === "Professionnel" ? document.getElementById('siret').value : ''),
                 metres: parseInt(document.getElementById('metres').value),
                 repas: parseInt(document.getElementById('repas').value),
-                statut: 'En attente',
                 prixTotal: prixTotal,
                 dateDemande: new Date().toLocaleString('fr-FR')
             });
 
             document.getElementById('prix-final').innerText = prixTotal;
-            form.style.display = 'none';
+            this.style.display = 'none';
             document.getElementById('message-succes').style.display = 'block';
             window.scrollTo(0,0);
         } catch (error) {
-            alert("Erreur réseau.");
-            btnSubmit.disabled = false;
+            alert("Erreur de connexion.");
+            this.querySelector('button').disabled = false;
         }
     });
 
@@ -217,26 +187,13 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         const nom = document.getElementById('nom').value;
-        const metres = document.getElementById('metres').value;
-        const repas = document.getElementById('repas').value;
-        const total = document.getElementById('prix-final').innerText;
-
-        doc.setFontSize(18);
-        doc.text("RECAPITULATIF D'INSCRIPTION", 105, 20, { align: "center" });
-        doc.setFontSize(14);
-        doc.text("Comité des Fêtes de Montbozon", 105, 30, { align: "center" });
-        doc.line(20, 35, 190, 35);
-        
-        doc.setFontSize(12);
-        doc.text(`Nom : ${nom}`, 20, 50);
-        doc.text(`Métrage : ${metres} mètres`, 20, 60);
-        doc.text(`Repas : ${repas}`, 20, 70);
-        doc.text(`TOTAL A REGLER : ${total} euros`, 20, 90);
-        
-        doc.text("Adresse pour le chèque :", 20, 110);
-        doc.text("Mr GIARD Jacques, 8 rue du docteur RENARD, 70230 Montbozon", 20, 117);
-        
-        doc.save(`Inscription_${nom}.pdf`);
+        doc.text("RECAPITULATIF INSCRIPTION BROCANTE", 105, 20, { align: "center" });
+        doc.text(`Nom : ${nom}`, 20, 40);
+        doc.text(`Type : ${document.querySelector('input[name="typeExposant"]:checked').value}`, 20, 50);
+        doc.text(`Metrage : ${document.getElementById('metres').value} m`, 20, 60);
+        doc.text(`Repas : ${document.getElementById('repas').value}`, 20, 70);
+        doc.text(`TOTAL : ${document.getElementById('prix-final').innerText} euros`, 20, 90);
+        doc.save(`Brocante_Montbozon_${nom}.pdf`);
     }
 </script>
 
