@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription Brocante - Comité des Fêtes</title>
+    <title>Inscription Brocante - Montbozon</title>
     <style>
         :root {
             --primary: #2c3e50;
             --success: #27ae60;
             --bg: #f4f7f6;
+            --accent: #2980b9;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg);
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
             padding: 20px;
         }
         .form-card {
@@ -26,7 +25,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
         }
         h1 { color: var(--primary); text-align: center; font-size: 1.4rem; margin-bottom: 20px; }
         form { display: flex; flex-direction: column; gap: 15px; }
@@ -38,31 +37,53 @@
             padding: 14px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 16px; /* Important pour éviter le zoom forcé sur iPhone */
+            font-size: 16px;
             outline: none;
-            transition: border-color 0.3s;
+            background-color: white;
         }
-        input:focus { border-color: var(--success); }
+        input:focus, select:focus { border-color: var(--accent); }
 
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .section-title { 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            color: #7f8c8d; 
+            margin-top: 15px; 
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Menu Plateau Repas */
+        .menu-repas {
+            background: #fdfefe;
+            border: 1px solid #d4e6f1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #34495e;
+            line-height: 1.5;
+        }
+        .menu-repas ul { margin: 5px 0 0 15px; padding: 0; }
 
         .legal {
             background: #f9f9f9;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #eee;
-            margin-top: 10px;
         }
         .checkbox-group {
             display: flex;
             align-items: flex-start;
             gap: 12px;
             margin-bottom: 12px;
-            cursor: pointer;
             font-size: 13px;
-            line-height: 1.4;
+            cursor: pointer;
         }
-        .checkbox-group input { width: 22px; height: 22px; cursor: pointer; flex-shrink: 0; }
+        .checkbox-group input { width: 22px; height: 22px; flex-shrink: 0; }
 
         .btn-submit {
             background: var(--success);
@@ -73,24 +94,24 @@
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 10px;
         }
-        .btn-submit:active { transform: scale(0.98); }
-        .btn-submit:disabled { background: #ccc; }
 
-        #success-screen {
-            display: none;
-            text-align: center;
-            padding: 40px 20px;
+        #success-screen { display: none; text-align: center; }
+        .payment-box {
+            background: #ebf5fb;
+            border: 2px dashed var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            margin: 20px 0;
+            color: #2c3e50;
         }
-        .icon-check { font-size: 50px; color: var(--success); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="form-card" id="main-card">
-    <h1>📝 Inscription Exposant</h1>
+    <h1>📝 Inscription Brocante</h1>
     
     <form id="form-exposant">
         <div class="field">
@@ -106,41 +127,56 @@
             <input type="text" id="siret" inputmode="numeric" placeholder="14 chiffres">
         </div>
 
-        <div class="field">
-            <label>Nom & Prénom</label>
-            <input type="text" id="nom" required placeholder="Ex: Jean DUPONT">
-        </div>
-
-        <div class="field">
-            <label>Téléphone Mobile</label>
-            <input type="tel" id="telephone" required placeholder="06 00 00 00 00">
-        </div>
-
-        <div class="field">
-            <label>E-mail</label>
-            <input type="email" id="email" required placeholder="votre@email.com">
-        </div>
-
+        <div class="section-title">Coordonnées</div>
+        <div class="field"><label>Nom & Prénom</label><input type="text" id="nom" required></div>
+        <div class="field"><label>Adresse complète</label><input type="text" id="adresse" required></div>
         <div class="row">
-            <div class="field">
-                <label>Métrage (2€/m)</label>
-                <input type="number" id="metres" value="2" min="1" inputmode="numeric">
-            </div>
-            <div class="field">
-                <label>Repas (15€)</label>
-                <input type="number" id="repas" value="0" min="0" inputmode="numeric">
+            <div class="field"><label>Téléphone</label><input type="tel" id="telephone" required></div>
+            <div class="field"><label>E-mail</label><input type="email" id="email" required></div>
+        </div>
+
+        <div class="section-title">Pièce d'identité</div>
+        <div class="row">
+            <div class="field"><label>N° CNI / Passeport</label><input type="text" id="cni" required></div>
+            <div class="field"><label>Délivrée le</label><input type="date" id="dateCni" required></div>
+        </div>
+
+        <div class="section-title">Réservation</div>
+        <div class="field">
+            <label>Métrage (Multiple de 5m)</label>
+            <select id="metres">
+                <option value="5">5 mètres (10€)</option>
+                <option value="10">10 mètres (20€)</option>
+                <option value="15">15 mètres (30€)</option>
+                <option value="20">20 mètres (40€)</option>
+                <option value="25">25 mètres (50€)</option>
+                <option value="30">30 mètres (60€)</option>
+            </select>
+        </div>
+        
+        <div class="field">
+            <label>Plateaux repas (15€ / unité)</label>
+            <input type="number" id="repas" value="0" min="0" inputmode="numeric">
+            <div class="menu-repas">
+                <strong>🍴 Composition du plateau :</strong>
+                <ul>
+                    <li>Jambon à l'os, tranche de rôti, terrine de canard</li>
+                    <li>Demi-tomate, salade de chou et carottes</li>
+                    <li>Salade composée au riz</li>
+                    <li>Dessert de saison et pain</li>
+                    <li>Plateau, serviette et couverts inclus</li>
+                </ul>
             </div>
         </div>
 
         <div class="legal">
             <label class="checkbox-group">
                 <input type="checkbox" id="rgpd" required>
-                <span>J'accepte le traitement de mes données pour l'organisation de cet événement.</span>
+                <span>J'accepte que mes données soient conservées pour l'organisation.</span>
             </label>
-            
             <label class="checkbox-group" id="label-honneur">
                 <input type="checkbox" id="honneur">
-                <span><strong>Attestation :</strong> Je certifie ne pas participer à plus de 2 ventes au déballage cette année.</span>
+                <span><strong>Attestation :</strong> Je certifie sur l'honneur ne pas participer à plus de 2 ventes au déballage cette année.</span>
             </label>
         </div>
 
@@ -149,17 +185,27 @@
 </div>
 
 <div class="form-card" id="success-screen">
-    <div class="icon-check">✅</div>
-    <h2>C'est enregistré !</h2>
-    <p>Votre demande d'inscription a bien été transmise au Comité des Fêtes.</p>
-    <p style="font-size: 14px; color: #666;">Vous pouvez fermer cette page.</p>
+    <div style="font-size: 50px;">✅</div>
+    <h2>Demande enregistrée !</h2>
+    <p>Merci de nous faire parvenir votre règlement pour valider votre place :</p>
+    
+    <div class="payment-box">
+        <p style="text-align:center; font-weight:bold; color:var(--accent)">TOTAL À RÉGLER : <span id="montant-final">0</span> €</p>
+        <hr style="border:0; border-top:1px solid #d4e6f1; margin:15px 0;">
+        <p><strong>Ordre :</strong> Comité des Fêtes de Montbozon</p>
+        <p><strong>Adresse d'envoi :</strong><br>
+            Monsieur GIARD Jacques<br>
+            8 rue du Docteur Renard<br>
+            70230 Montbozon
+        </p>
+    </div>
+    <button onclick="location.reload()" style="background:none; border:1px solid #ccc; padding:10px; border-radius:8px; cursor:pointer; width: 100%;">Retour</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-    // Configuration identique à votre compte pour que les deux communiquent
     const firebaseConfig = {
         apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
         authDomain: "inscription-brocante.firebaseapp.com",
@@ -182,46 +228,43 @@
 
     document.getElementById('form-exposant').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const type = document.getElementById('typeExposant').value;
-        const honorCheck = document.getElementById('honneur').checked;
-
-        if (type === "Particulier" && !honorCheck) {
-            alert("Vous devez cocher l'attestation sur l'honneur.");
-            return;
+        if (type === "Particulier" && !document.getElementById('honneur').checked) {
+            alert("L'attestation sur l'honneur est obligatoire."); return;
         }
 
         const btn = document.getElementById('btn-valider');
         btn.disabled = true;
-        btn.innerText = "Envoi en cours...";
+        btn.innerText = "Envoi...";
+
+        const m = parseInt(document.getElementById('metres').value);
+        const r = parseInt(document.getElementById('repas').value) || 0;
+        const total = (m * 2) + (r * 15);
 
         const data = {
             nom: document.getElementById('nom').value,
+            adresse: document.getElementById('adresse').value,
             type: type,
             telephone: document.getElementById('telephone').value,
             email: document.getElementById('email').value,
-            metres: parseInt(document.getElementById('metres').value),
-            repas: parseInt(document.getElementById('repas').value),
+            cni: document.getElementById('cni').value,
+            dateCni: document.getElementById('dateCni').value,
+            metres: m,
+            repas: r,
             siret: type === "Professionnel" ? document.getElementById('siret').value : "",
-            statut: "En attente", // Statut par défaut pour l'admin
-            emplacement: "-",     // À remplir par l'admin plus tard
-            prixTotal: (parseInt(document.getElementById('metres').value) * 2) + (parseInt(document.getElementById('repas').value) * 15),
+            statut: "En attente",
+            prixTotal: total,
             dateSaisie: new Date().toLocaleString()
         };
 
-        // Envoi vers la même base de données
         db.ref("annees/" + anneeSelectionnee + "/exposants").push(data)
             .then(() => {
+                document.getElementById('montant-final').innerText = total;
                 document.getElementById('main-card').style.display = 'none';
                 document.getElementById('success-screen').style.display = 'block';
             })
-            .catch((error) => {
-                alert("Erreur réseau : " + error.message);
-                btn.disabled = false;
-                btn.innerText = "Valider mon inscription";
-            });
+            .catch((err) => { alert("Erreur : " + err.message); btn.disabled = false; });
     });
 </script>
-
 </body>
 </html>
