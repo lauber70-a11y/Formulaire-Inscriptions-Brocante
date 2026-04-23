@@ -12,14 +12,13 @@
             --accent: #2980b9;
         }
         
-        /* Ajustements pour éviter les débordements sur smartphone */
         * { box-sizing: border-box; }
         
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg);
             margin: 0;
-            padding: 10px; /* Moins de padding sur les petits écrans */
+            padding: 10px;
             display: flex;
             justify-content: center;
         }
@@ -31,7 +30,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 500px;
-            overflow: hidden; /* Empêche le contenu de sortir */
         }
 
         h1 { color: var(--primary); text-align: center; font-size: 1.3rem; margin-bottom: 20px; }
@@ -41,16 +39,15 @@
         label { font-weight: 600; font-size: 14px; color: #555; }
         
         input, select {
-            width: 100%; /* Force la largeur à l'intérieur du parent */
+            width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 16px; /* Empêche le zoom auto sur iPhone */
+            font-size: 16px;
             outline: none;
             background-color: white;
         }
 
-        /* Grille adaptative : 2 colonnes sur PC, 1 seule sur petit smartphone */
         .row { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
@@ -68,19 +65,17 @@
             font-weight: bold;
         }
 
-        /* Bouton Règlement */
         .btn-reglement {
-            background-color: #ecf0f1;
+            background-color: #f8f9fa;
             color: var(--accent);
             text-decoration: none;
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             border: 1px solid var(--accent);
             display: block;
-            margin-bottom: 10px;
         }
 
         .menu-repas {
@@ -90,6 +85,7 @@
             border-radius: 8px;
             font-size: 12px;
             color: #34495e;
+            line-height: 1.4;
         }
 
         .legal {
@@ -109,22 +105,22 @@
         }
 
         .checkbox-group input { 
-            width: 20px; 
-            height: 20px; 
-            flex-shrink: 0; 
-            margin-top: 2px;
+            width: 22px; 
+            height: 22px; 
+            flex-shrink: 0;
         }
 
         .btn-submit {
             background: var(--success);
             color: white;
             border: none;
-            padding: 16px;
+            padding: 18px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 17px;
             cursor: pointer;
             width: 100%;
+            box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);
         }
 
         #success-screen { display: none; text-align: center; }
@@ -144,8 +140,8 @@
     <h1>📝 Inscription Brocante</h1>
     
     <form id="form-exposant">
-        <a href="LIEN_VERS_VOTRE_REGLEMENT.pdf" target="_blank" class="btn-reglement">
-            📖 Lire le Règlement Intérieur
+        <a href="URL_VOTRE_REGLEMENT.pdf" target="_blank" class="btn-reglement">
+            📖 Consulter le Règlement Intérieur
         </a>
 
         <div class="field">
@@ -163,7 +159,7 @@
 
         <div class="section-title">Coordonnées</div>
         <div class="field"><label>Nom & Prénom</label><input type="text" id="nom" required></div>
-        <div class="field"><label>Adresse complète</label><input type="text" id="adresse" required></div>
+        <div class="field"><label>Adresse complète</label><input type="text" id="adresse" required placeholder="N°, Rue, CP, Ville"></div>
         
         <div class="row">
             <div class="field"><label>Téléphone</label><input type="tel" id="telephone" required></div>
@@ -171,9 +167,10 @@
         </div>
 
         <div class="section-title">Pièce d'identité</div>
+        <div class="field"><label>N° de CNI / Passeport</label><input type="text" id="cni" required></div>
         <div class="row">
-            <div class="field"><label>N° CNI</label><input type="text" id="cni" required></div>
             <div class="field"><label>Délivrée le</label><input type="date" id="dateCni" required></div>
+            <div class="field"><label>Délivrée par</label><input type="text" id="autoriteCni" required placeholder="ex: Mairie de..."></div>
         </div>
 
         <div class="section-title">Réservation</div>
@@ -200,17 +197,17 @@
         <div class="legal">
             <label class="checkbox-group">
                 <input type="checkbox" id="accept-reglement" required>
-                <span>J'ai lu et j'accepte le <strong>règlement intérieur</strong> de la brocante.</span>
+                <span>J'accepte le <strong>règlement intérieur</strong>.</span>
             </label>
 
             <label class="checkbox-group">
                 <input type="checkbox" id="rgpd" required>
-                <span>J'accepte la conservation de mes données pour l'organisation.</span>
+                <span>J'accepte le traitement de mes données (RGPD).</span>
             </label>
 
             <label class="checkbox-group" id="label-honneur">
                 <input type="checkbox" id="honneur">
-                <span><strong>Attestation :</strong> Je certifie ne pas participer à plus de 2 ventes au déballage cette année.</span>
+                <span><strong>Attestation :</strong> Max. 2 ventes au déballage / an.</span>
             </label>
         </div>
 
@@ -222,22 +219,23 @@
     <div style="font-size: 40px;">✅</div>
     <h2>Demande enregistrée !</h2>
     <div class="payment-box">
-        <p style="text-align:center; font-weight:bold;">TOTAL : <span id="montant-final">0</span> €</p>
+        <p style="text-align:center; font-weight:bold; font-size:18px;">TOTAL : <span id="montant-final">0</span> €</p>
+        <hr style="border:0; border-top:1px solid #d4e6f1; margin:10px 0;">
         <p><strong>Ordre :</strong> Comité des Fêtes de Montbozon</p>
-        <p><strong>Adresse :</strong><br>
+        <p><strong>Adresse d'envoi :</strong><br>
             M. GIARD Jacques<br>
             8 rue du Docteur Renard<br>
             70230 Montbozon
         </p>
     </div>
-    <button onclick="location.reload()" class="btn-submit" style="background:#ccc;">Retour</button>
+    <p style="font-size:12px; color:#7f8c8d; margin-top:15px;">Votre place sera réservée après réception du chèque.</p>
+    <button onclick="location.reload()" class="btn-submit" style="background:#bdc3c7;">Retour</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-    // Config Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
         authDomain: "inscription-brocante.firebaseapp.com",
@@ -260,8 +258,6 @@
 
     document.getElementById('form-exposant').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Vérification attestation particulier
         const type = document.getElementById('typeExposant').value;
         if (type === "Particulier" && !document.getElementById('honneur').checked) {
             alert("L'attestation sur l'honneur est obligatoire."); return;
@@ -283,6 +279,7 @@
             email: document.getElementById('email').value,
             cni: document.getElementById('cni').value,
             dateCni: document.getElementById('dateCni').value,
+            autoriteCni: document.getElementById('autoriteCni').value, // Nouveau champ
             metres: m,
             repas: r,
             statut: "En attente",
