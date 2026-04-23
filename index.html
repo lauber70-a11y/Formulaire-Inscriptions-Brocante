@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Inscription Brocante - Montbozon</title>
     <style>
         :root {
@@ -11,79 +11,109 @@
             --bg: #f4f7f6;
             --accent: #2980b9;
         }
+        
+        /* Ajustements pour éviter les débordements sur smartphone */
+        * { box-sizing: border-box; }
+        
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg);
             margin: 0;
+            padding: 10px; /* Moins de padding sur les petits écrans */
             display: flex;
             justify-content: center;
-            padding: 20px;
         }
+
         .form-card {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 500px;
+            overflow: hidden; /* Empêche le contenu de sortir */
         }
-        h1 { color: var(--primary); text-align: center; font-size: 1.4rem; margin-bottom: 20px; }
+
+        h1 { color: var(--primary); text-align: center; font-size: 1.3rem; margin-bottom: 20px; }
         form { display: flex; flex-direction: column; gap: 15px; }
         
-        .field { display: flex; flex-direction: column; gap: 5px; }
+        .field { display: flex; flex-direction: column; gap: 5px; width: 100%; }
         label { font-weight: 600; font-size: 14px; color: #555; }
         
         input, select {
-            padding: 14px;
+            width: 100%; /* Force la largeur à l'intérieur du parent */
+            padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 16px; /* Empêche le zoom auto sur iPhone */
             outline: none;
             background-color: white;
         }
-        input:focus, select:focus { border-color: var(--accent); }
 
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* Grille adaptative : 2 colonnes sur PC, 1 seule sur petit smartphone */
+        .row { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 10px; 
+            width: 100%;
+        }
 
         .section-title { 
             font-size: 11px; 
             text-transform: uppercase; 
             color: #7f8c8d; 
-            margin-top: 15px; 
+            margin-top: 10px; 
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
             font-weight: bold;
-            letter-spacing: 1px;
         }
 
-        /* Menu Plateau Repas */
+        /* Bouton Règlement */
+        .btn-reglement {
+            background-color: #ecf0f1;
+            color: var(--accent);
+            text-decoration: none;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid var(--accent);
+            display: block;
+            margin-bottom: 10px;
+        }
+
         .menu-repas {
             background: #fdfefe;
             border: 1px solid #d4e6f1;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-top: 8px;
-            font-size: 13px;
+            font-size: 12px;
             color: #34495e;
-            line-height: 1.5;
         }
-        .menu-repas ul { margin: 5px 0 0 15px; padding: 0; }
 
         .legal {
             background: #f9f9f9;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid #eee;
         }
+
         .checkbox-group {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 12px;
             font-size: 13px;
             cursor: pointer;
         }
-        .checkbox-group input { width: 22px; height: 22px; flex-shrink: 0; }
+
+        .checkbox-group input { 
+            width: 20px; 
+            height: 20px; 
+            flex-shrink: 0; 
+            margin-top: 2px;
+        }
 
         .btn-submit {
             background: var(--success);
@@ -94,17 +124,17 @@
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
+            width: 100%;
         }
 
         #success-screen { display: none; text-align: center; }
         .payment-box {
             background: #ebf5fb;
             border: 2px dashed var(--accent);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             text-align: left;
-            margin: 20px 0;
-            color: #2c3e50;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -114,6 +144,10 @@
     <h1>📝 Inscription Brocante</h1>
     
     <form id="form-exposant">
+        <a href="LIEN_VERS_VOTRE_REGLEMENT.pdf" target="_blank" class="btn-reglement">
+            📖 Lire le Règlement Intérieur
+        </a>
+
         <div class="field">
             <label>Vous êtes :</label>
             <select id="typeExposant" onchange="togglePro()">
@@ -130,6 +164,7 @@
         <div class="section-title">Coordonnées</div>
         <div class="field"><label>Nom & Prénom</label><input type="text" id="nom" required></div>
         <div class="field"><label>Adresse complète</label><input type="text" id="adresse" required></div>
+        
         <div class="row">
             <div class="field"><label>Téléphone</label><input type="tel" id="telephone" required></div>
             <div class="field"><label>E-mail</label><input type="email" id="email" required></div>
@@ -137,13 +172,13 @@
 
         <div class="section-title">Pièce d'identité</div>
         <div class="row">
-            <div class="field"><label>N° CNI / Passeport</label><input type="text" id="cni" required></div>
+            <div class="field"><label>N° CNI</label><input type="text" id="cni" required></div>
             <div class="field"><label>Délivrée le</label><input type="date" id="dateCni" required></div>
         </div>
 
         <div class="section-title">Réservation</div>
         <div class="field">
-            <label>Métrage (Multiple de 5m)</label>
+            <label>Métrage (Tranches de 5m)</label>
             <select id="metres">
                 <option value="5">5 mètres (10€)</option>
                 <option value="10">10 mètres (20€)</option>
@@ -158,25 +193,24 @@
             <label>Plateaux repas (15€ / unité)</label>
             <input type="number" id="repas" value="0" min="0" inputmode="numeric">
             <div class="menu-repas">
-                <strong>🍴 Composition du plateau :</strong>
-                <ul>
-                    <li>Jambon à l'os, tranche de rôti, terrine de canard</li>
-                    <li>Demi-tomate, salade de chou et carottes</li>
-                    <li>Salade composée au riz</li>
-                    <li>Dessert de saison et pain</li>
-                    <li>Plateau, serviette et couverts inclus</li>
-                </ul>
+                <strong>🍴 Composition :</strong> Jambon à l'os, rôti, terrine, tomates, salades (chou, carotte, riz), dessert, pain, couverts.
             </div>
         </div>
 
         <div class="legal">
             <label class="checkbox-group">
-                <input type="checkbox" id="rgpd" required>
-                <span>J'accepte que mes données soient conservées pour l'organisation.</span>
+                <input type="checkbox" id="accept-reglement" required>
+                <span>J'ai lu et j'accepte le <strong>règlement intérieur</strong> de la brocante.</span>
             </label>
+
+            <label class="checkbox-group">
+                <input type="checkbox" id="rgpd" required>
+                <span>J'accepte la conservation de mes données pour l'organisation.</span>
+            </label>
+
             <label class="checkbox-group" id="label-honneur">
                 <input type="checkbox" id="honneur">
-                <span><strong>Attestation :</strong> Je certifie sur l'honneur ne pas participer à plus de 2 ventes au déballage cette année.</span>
+                <span><strong>Attestation :</strong> Je certifie ne pas participer à plus de 2 ventes au déballage cette année.</span>
             </label>
         </div>
 
@@ -185,27 +219,25 @@
 </div>
 
 <div class="form-card" id="success-screen">
-    <div style="font-size: 50px;">✅</div>
+    <div style="font-size: 40px;">✅</div>
     <h2>Demande enregistrée !</h2>
-    <p>Merci de nous faire parvenir votre règlement pour valider votre place :</p>
-    
     <div class="payment-box">
-        <p style="text-align:center; font-weight:bold; color:var(--accent)">TOTAL À RÉGLER : <span id="montant-final">0</span> €</p>
-        <hr style="border:0; border-top:1px solid #d4e6f1; margin:15px 0;">
+        <p style="text-align:center; font-weight:bold;">TOTAL : <span id="montant-final">0</span> €</p>
         <p><strong>Ordre :</strong> Comité des Fêtes de Montbozon</p>
-        <p><strong>Adresse d'envoi :</strong><br>
-            Monsieur GIARD Jacques<br>
+        <p><strong>Adresse :</strong><br>
+            M. GIARD Jacques<br>
             8 rue du Docteur Renard<br>
             70230 Montbozon
         </p>
     </div>
-    <button onclick="location.reload()" style="background:none; border:1px solid #ccc; padding:10px; border-radius:8px; cursor:pointer; width: 100%;">Retour</button>
+    <button onclick="location.reload()" class="btn-submit" style="background:#ccc;">Retour</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
+    // Config Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
         authDomain: "inscription-brocante.firebaseapp.com",
@@ -228,6 +260,8 @@
 
     document.getElementById('form-exposant').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Vérification attestation particulier
         const type = document.getElementById('typeExposant').value;
         if (type === "Particulier" && !document.getElementById('honneur').checked) {
             alert("L'attestation sur l'honneur est obligatoire."); return;
@@ -251,7 +285,6 @@
             dateCni: document.getElementById('dateCni').value,
             metres: m,
             repas: r,
-            siret: type === "Professionnel" ? document.getElementById('siret').value : "",
             statut: "En attente",
             prixTotal: total,
             dateSaisie: new Date().toLocaleString()
@@ -262,6 +295,7 @@
                 document.getElementById('montant-final').innerText = total;
                 document.getElementById('main-card').style.display = 'none';
                 document.getElementById('success-screen').style.display = 'block';
+                window.scrollTo(0,0);
             })
             .catch((err) => { alert("Erreur : " + err.message); btn.disabled = false; });
     });
