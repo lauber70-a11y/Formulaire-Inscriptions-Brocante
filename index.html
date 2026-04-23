@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réservation Brocante</title>
+    <title>Inscription Brocante - Comité des Fêtes</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -11,79 +11,89 @@
             --bg: #f4f7f6;
         }
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
+            margin: 0;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
             padding: 20px;
-            margin: 0;
         }
-        .reservation-card {
+        .form-card {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
         }
-        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; margin-bottom: 25px; }
-        form { display: flex; flex-direction: column; gap: 18px; }
-        .group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-weight: 600; font-size: 14px; color: #444; }
+        h1 { color: var(--primary); text-align: center; font-size: 1.4rem; margin-bottom: 20px; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        label { font-weight: 600; font-size: 14px; color: #555; }
+        
         input, select {
-            padding: 12px;
+            padding: 14px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 16px; /* Évite le zoom iOS */
+            font-size: 16px; /* Important pour éviter le zoom forcé sur iPhone */
             outline: none;
+            transition: border-color 0.3s;
         }
         input:focus { border-color: var(--success); }
-        
-        .legal-box {
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .legal {
             background: #f9f9f9;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #eee;
-            font-size: 13px;
+            margin-top: 10px;
         }
-        .checkbox-line {
+        .checkbox-group {
             display: flex;
             align-items: flex-start;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 12px;
             cursor: pointer;
+            font-size: 13px;
+            line-height: 1.4;
         }
-        .checkbox-line input { width: 20px; height: 20px; cursor: pointer; }
+        .checkbox-group input { width: 22px; height: 22px; cursor: pointer; flex-shrink: 0; }
 
         .btn-submit {
             background: var(--success);
             color: white;
             border: none;
-            padding: 15px;
+            padding: 16px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
+            transition: background 0.3s;
             margin-top: 10px;
         }
+        .btn-submit:active { transform: scale(0.98); }
         .btn-submit:disabled { background: #ccc; }
 
-        #message-succes {
+        #success-screen {
             display: none;
             text-align: center;
-            color: var(--success);
-            font-weight: bold;
-            padding: 20px;
+            padding: 40px 20px;
         }
+        .icon-check { font-size: 50px; color: var(--success); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-<div class="reservation-card" id="form-container">
-    <h1>🎟️ Réserver un emplacement</h1>
+<div class="form-card" id="main-card">
+    <h1>📝 Inscription Exposant</h1>
     
-    <form id="resa-form">
-        <div class="group">
+    <form id="form-exposant">
+        <div class="field">
             <label>Vous êtes :</label>
             <select id="typeExposant" onchange="togglePro()">
                 <option value="Particulier">Un Particulier</option>
@@ -91,58 +101,65 @@
             </select>
         </div>
 
-        <div class="group" id="siret-div" style="display:none">
+        <div class="field" id="div-siret" style="display:none">
             <label>N° SIRET</label>
             <input type="text" id="siret" inputmode="numeric" placeholder="14 chiffres">
         </div>
 
-        <div class="group">
+        <div class="field">
             <label>Nom & Prénom</label>
-            <input type="text" id="nom" required placeholder="Jean Dupont">
+            <input type="text" id="nom" required placeholder="Ex: Jean DUPONT">
         </div>
 
-        <div class="group">
-            <label>Téléphone mobile</label>
+        <div class="field">
+            <label>Téléphone Mobile</label>
             <input type="tel" id="telephone" required placeholder="06 00 00 00 00">
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="group">
-                <label>Métrage (m)</label>
-                <input type="number" id="metres" value="2" min="1">
+        <div class="field">
+            <label>E-mail</label>
+            <input type="email" id="email" required placeholder="votre@email.com">
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label>Métrage (2€/m)</label>
+                <input type="number" id="metres" value="2" min="1" inputmode="numeric">
             </div>
-            <div class="group">
+            <div class="field">
                 <label>Repas (15€)</label>
-                <input type="number" id="repas" value="0" min="0">
+                <input type="number" id="repas" value="0" min="0" inputmode="numeric">
             </div>
         </div>
 
-        <div class="legal-box">
-            <label class="checkbox-line">
+        <div class="legal">
+            <label class="checkbox-group">
                 <input type="checkbox" id="rgpd" required>
-                <span>J'accepte que mes données soient utilisées pour la gestion de cette brocante.</span>
+                <span>J'accepte le traitement de mes données pour l'organisation de cet événement.</span>
             </label>
-            <label class="checkbox-line" id="honneur-line">
+            
+            <label class="checkbox-group" id="label-honneur">
                 <input type="checkbox" id="honneur">
                 <span><strong>Attestation :</strong> Je certifie ne pas participer à plus de 2 ventes au déballage cette année.</span>
             </label>
         </div>
 
-        <button type="submit" class="btn-submit" id="btn-valider">Confirmer ma réservation</button>
+        <button type="submit" class="btn-submit" id="btn-valider">Valider mon inscription</button>
     </form>
 </div>
 
-<div id="message-succes">
-    <h2>✅ Merci !</h2>
-    <p>Votre réservation a bien été enregistrée.<br>Le Comité des Fêtes reviendra vers vous.</p>
-    <button onclick="location.reload()" style="background:none; border:1px solid #ccc; padding:8px; border-radius:5px; cursor:pointer">Nouvelle saisie</button>
+<div class="form-card" id="success-screen">
+    <div class="icon-check">✅</div>
+    <h2>C'est enregistré !</h2>
+    <p>Votre demande d'inscription a bien été transmise au Comité des Fêtes.</p>
+    <p style="font-size: 14px; color: #666;">Vous pouvez fermer cette page.</p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <script>
-    // Config Firebase (Identique à votre base de données)
+    // Configuration identique à votre compte pour que les deux communiquent
     const firebaseConfig = {
         apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
         authDomain: "inscription-brocante.firebaseapp.com",
@@ -159,18 +176,18 @@
 
     function togglePro() {
         const isPro = document.getElementById('typeExposant').value === "Professionnel";
-        document.getElementById('siret-div').style.display = isPro ? 'flex' : 'none';
-        document.getElementById('honneur-line').style.display = isPro ? 'none' : 'flex';
+        document.getElementById('div-siret').style.display = isPro ? 'flex' : 'none';
+        document.getElementById('label-honneur').style.display = isPro ? 'none' : 'flex';
     }
 
-    document.getElementById('resa-form').addEventListener('submit', function(e) {
+    document.getElementById('form-exposant').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const type = document.getElementById('typeExposant').value;
         const honorCheck = document.getElementById('honneur').checked;
 
         if (type === "Particulier" && !honorCheck) {
-            alert("Veuillez cocher l'attestation sur l'honneur.");
+            alert("Vous devez cocher l'attestation sur l'honneur.");
             return;
         }
 
@@ -178,28 +195,30 @@
         btn.disabled = true;
         btn.innerText = "Envoi en cours...";
 
-        const nouvelleResa = {
+        const data = {
             nom: document.getElementById('nom').value,
             type: type,
             telephone: document.getElementById('telephone').value,
+            email: document.getElementById('email').value,
             metres: parseInt(document.getElementById('metres').value),
             repas: parseInt(document.getElementById('repas').value),
             siret: type === "Professionnel" ? document.getElementById('siret').value : "",
-            statut: "En attente",
-            dateSaisie: new Date().toLocaleString(),
-            provenance: "Formulaire Client"
+            statut: "En attente", // Statut par défaut pour l'admin
+            emplacement: "-",     // À remplir par l'admin plus tard
+            prixTotal: (parseInt(document.getElementById('metres').value) * 2) + (parseInt(document.getElementById('repas').value) * 15),
+            dateSaisie: new Date().toLocaleString()
         };
 
-        // Envoi à la même branche Firebase que votre tableau
-        db.ref("annees/" + anneeSelectionnee + "/exposants").push(nouvelleResa)
+        // Envoi vers la même base de données
+        db.ref("annees/" + anneeSelectionnee + "/exposants").push(data)
             .then(() => {
-                document.getElementById('form-container').style.display = 'none';
-                document.getElementById('message-succes').style.display = 'block';
+                document.getElementById('main-card').style.display = 'none';
+                document.getElementById('success-screen').style.display = 'block';
             })
             .catch((error) => {
-                alert("Erreur : " + error.message);
+                alert("Erreur réseau : " + error.message);
                 btn.disabled = false;
-                btn.innerText = "Confirmer ma réservation";
+                btn.innerText = "Valider mon inscription";
             });
     });
 </script>
