@@ -1,1 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Brocante - Comité des Fêtes</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #18bc9c;
+            --light: #f5f6fa;
+            --dark: #34495e;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+            --pro: #9b59b6;
+            --email-color: #2980b9;
+            --email-done: #2ecc71;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-app {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+        .header-droite { display: flex; align-items: center; gap: 15px; }
+        
+        /* Stats & Jauge */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .jauge-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        .jauge-barre {
+            height: 20px;
+            width: 0%;
+            background-color: var(--secondary);
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            transition: width 0.4s ease;
+        }
 
+        /* Modale & Formulaire */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        form { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        input, select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+
+        /* Boutons */
+        .btn-modern {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-add-exposant { background-color: #27ae60; width: 100%; margin-bottom: 10px; }
+        
+        /* Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: var(--primary); color: white; }
+        
+        .status-badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 10px; }
+        .status-paye { background-color: var(--secondary); }
+        .status-attente { background-color: var(--warning); }
+
+        /* Mobile Optimisation */
+        @media (max-width: 600px) {
+            .header-app { flex-direction: column; text-align: center; }
+            .stats { display: grid; grid-template-columns: 1fr 1fr; }
+            .actions-globales { display: none; } /* On cache les exports complexes sur mobile */
+            table th:nth-child(4), table td:nth-child(4), 
+            table th:nth-child(5), table td:nth-child(5),
+            table th:nth-child(7), table td:nth-child(7) { display: none; } /* On réduit le tableau sur mobile */
+        }
+
+        /* Print */
+        @media print {
+            .no-print { display: none !important; }
+            .container { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-app no-print">
+        <h1>🎪 Inscriptions Brocante</h1>
+        <div class="header-droite">
+            <select id="select-annee" onchange="changerAnneeConsultation()"></select>
+        </div>
+    </div>
+
+    <div class="stats no-print">
+        <div>Exposants: <span id="stat-total">0</span></div>
+        <div>Mètres: <span id="stat-metres">0</span>m / <span id="stat-capa-brute">500</span>m</div>
+        <div>Collecté: <span id="stat-caisse">0</span>€</div>
+        <div style="color:var(--warning)">Plateaux: <span id="stat-repas">0</span></div>
+    </div>
+
+    <div class="jauge-container no-print">
+        <div id="jauge" class="jauge-barre">0%</div>
+    </div>
+
+    <button class="btn-modern btn-add-exposant no-print" onclick="ouvrirFormulaire()">
+        ➕ Ajouter un Exposant (Mobile Friendly)
+    </button>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Place</th>
+                    <th>Nom</th>
+                    <th>Type</th>
+                    <th>Téléphone</th>
+                    <th>Métrage</th>
+                    <th>Total</th>
+                    <th>Statut</th>
+                    <th class="no-print">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="liste-corps"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-form">
+    <div class="modal-content">
+        <h2 id="titre-formulaire">Nouvelle Inscription</h2>
+        <form id="form-inscription">
+            <input type="hidden" id="edit-id">
+            
+            <div class="form-group">
+                <label>Type</label>
+                <select id="typeExposant" onchange="toggleSiret()">
+                    <option value="Particulier">Particulier</option>
+                    <option value="Professionnel">Professionnel</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="groupe-siret" style="display:none">
+                <label>SIRET</label>
+                <input type="text" id="siret" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label>Nom / Prénom</label>
+                <input type="text" id="nom" required>
+            </div>
+
+            <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" id="telephone">
+            </div>
+
+            <div class="form-group">
+                <label>Métrage (2€/m)</label>
+                <input type="number" id="metres" value="2" min="1" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label>Plateaux repas (15€/u)</label>
+                <input type="number" id="repas" value="0" min="0" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label>Emplacement</label>
+                <input type="text" id="emplacement" placeholder="ex: A01">
+            </div>
+
+            <div class="form-group">
+                <label>Statut Paiement</label>
+                <select id="statut">
+                    <option value="En attente">⏳ En attente</option>
+                    <option value="Payé">✅ Payé</option>
+                </select>
+            </div>
+
+            <div style="background:#f9f9f9; padding:10px; border-radius:5px; font-size:13px; border:1px solid #ddd">
+                <label style="display:flex; gap:10px; align-items:center; margin-bottom:10px">
+                    <input type="checkbox" id="accept-rgpd" required style="width:20px; height:20px"> RGPD: J'accepte la conservation des données.
+                </label>
+                <label id="label-honneur" style="display:flex; gap:10px; align-items:center">
+                    <input type="checkbox" id="accept-honneur" style="width:20px; height:20px"> Attestation: Max 2 brocantes / an.
+                </label>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:15px">
+                <button type="button" class="btn-modern" style="background:var(--danger); flex:1" onclick="fermerFormulaire()">Annuler</button>
+                <button type="submit" class="btn-modern" style="background:var(--secondary); flex:2">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<script>
+    const PRIX_M = 2;
+    const PRIX_R = 15;
+    const anneeActuelle = new Date().getFullYear().toString();
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDk6OPQe7XS5hdtNfJHOriTc00_RWCI4A4",
+        authDomain: "inscription-brocante.firebaseapp.com",
+        databaseURL: "https://inscription-brocante-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "inscription-brocante",
+        storageBucket: "inscription-brocante.firebasestorage.app",
+        messagingSenderId: "836597625276",
+        appId: "1:836597625276:web:432d6eaada859773f5bbb9"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let inscriptions = [];
+    let capaciteTotale = 500;
+    let anneeSelectionnee = localStorage.getItem('brocanteAnnee') || anneeActuelle;
+
+    // --- LOGIQUE FORMULAIRE ---
+    function ouvrirFormulaire() { document.getElementById('modal-form').classList.add('active'); }
+    function fermerFormulaire() { 
+        document.getElementById('modal-form').classList.remove('active'); 
+        document.getElementById('form-inscription').reset();
+        document.getElementById('edit-id').value = '';
+    }
+
+    function toggleSiret() {
+        const isPro = document.getElementById('typeExposant').value === "Professionnel";
+        document.getElementById('groupe-siret').style.display = isPro ? 'block' : 'none';
+        document.getElementById('label-honneur').style.display = isPro ? 'none' : 'flex';
+    }
+
+    // --- FIREBASE DATA ---
+    function chargerAnnee(ann) {
+        db.ref("annees/" + ann + "/exposants").on("value", (snapshot) => {
+            inscriptions = [];
+            if (snapshot.exists()) {
+                snapshot.forEach(child => { inscriptions.push({ id: child.key, ...child.val() }); });
+            }
+            afficherDonnees();
+        });
+    }
+
+    document.getElementById('form-inscription').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const type = document.getElementById('typeExposant').value;
+        
+        if (type === "Particulier" && !document.getElementById('accept-honneur').checked) {
+            alert("L'attestation sur l'honneur est obligatoire."); return;
+        }
+
+        const data = {
+            nom: document.getElementById('nom').value,
+            type: type,
+            telephone: document.getElementById('telephone').value,
+            metres: parseInt(document.getElementById('metres').value),
+            repas: parseInt(document.getElementById('repas').value),
+            emplacement: document.getElementById('emplacement').value || '-',
+            statut: document.getElementById('statut').value,
+            siret: type === "Professionnel" ? document.getElementById('siret').value : "",
+            prixTotal: (parseInt(document.getElementById('metres').value) * PRIX_M) + (parseInt(document.getElementById('repas').value) * PRIX_R),
+            rgpd: document.getElementById('accept-rgpd').checked,
+            honneur: type === "Particulier" ? document.getElementById('accept-honneur').checked : true
+        };
+
+        if (id) db.ref("annees/" + anneeSelectionnee + "/exposants/" + id).update(data);
+        else db.ref("annees/" + anneeSelectionnee + "/exposants").push(data);
+
+        fermerFormulaire();
+    });
+
+    function afficherDonnees() {
+        const corps = document.getElementById('liste-corps');
+        corps.innerHTML = '';
+        let m = 0, c = 0, r = 0;
+
+        inscriptions.forEach(i => {
+            m += i.metres;
+            r += (i.repas || 0);
+            if (i.statut.includes("Payé")) c += i.prixTotal;
+
+            corps.innerHTML += `
+                <tr style="${i.statut.includes('Payé') ? '' : 'background:#fff9e6'}">
+                    <td><strong>${i.emplacement}</strong></td>
+                    <td>${i.nom}</td>
+                    <td>${i.type === 'Professionnel' ? '⭐ Pro' : '👤 Part.'}</td>
+                    <td>${i.telephone}</td>
+                    <td>${i.metres}m</td>
+                    <td>${i.prixTotal}€</td>
+                    <td><span class="status-badge ${i.statut.includes('Payé') ? 'status-paye' : 'status-attente'}">${i.statut}</span></td>
+                    <td class="no-print">
+                        <button onclick="chargerModification('${i.id}')">✏️</button>
+                        <button onclick="supprimer('${i.id}')" style="color:red">🗑️</button>
+                    </td>
+                </tr>`;
+        });
+
+        document.getElementById('stat-total').innerText = inscriptions.length;
+        document.getElementById('stat-metres').innerText = m;
+        document.getElementById('stat-repas').innerText = r;
+        document.getElementById('stat-caisse').innerText = c;
+        
+        let p = (m / capaciteTotale) * 100;
+        document.getElementById('jauge').style.width = Math.min(p, 100) + '%';
+        document.getElementById('jauge').innerText = Math.round(p) + '%';
+    }
+
+    function chargerModification(id) {
+        const i = inscriptions.find(x => x.id === id);
+        document.getElementById('edit-id').value = i.id;
+        document.getElementById('nom').value = i.nom;
+        document.getElementById('typeExposant').value = i.type;
+        document.getElementById('telephone').value = i.telephone;
+        document.getElementById('metres').value = i.metres;
+        document.getElementById('repas').value = i.repas;
+        document.getElementById('emplacement').value = i.emplacement;
+        document.getElementById('statut').value = i.statut;
+        toggleSiret();
+        ouvrirFormulaire();
+    }
+
+    function supprimer(id) {
+        if (confirm("Supprimer cet exposant ?")) db.ref("annees/" + anneeSelectionnee + "/exposants/" + id).remove();
+    }
+
+    function initialiserAnnees() {
+        const s = document.getElementById('select-annee');
+        [2024, 2025, 2026].forEach(a => {
+            s.innerHTML += `<option value="${a}" ${a == anneeSelectionnee ? 'selected' : ''}>${a}</option>`;
+        });
+    }
+
+    function changerAnneeConsultation() {
+        anneeSelectionnee = document.getElementById('select-annee').value;
+        localStorage.setItem('brocanteAnnee', anneeSelectionnee);
+        chargerAnnee(anneeSelectionnee);
+    }
+
+    initialiserAnnees();
+    chargerAnnee(anneeSelectionnee);
+</script>
+
+</body>
+</html>
